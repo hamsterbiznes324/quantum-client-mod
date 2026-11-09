@@ -5,7 +5,7 @@ public final class Theme {
     public static final String[] NAMES = {"Фиолетовый", "Розовый", "Синий", "Зелёный", "Оранжевый", "Красный"};
     public static final int[] COLORS = {0xFF9B5CFF, 0xFFFF5FA8, 0xFF4DA3FF, 0xFF3DDC84, 0xFFFFA23D, 0xFFFF4D5E};
 
-    public static int index = 0;
+    public static int index = 3;
 
     private Theme() {
     }

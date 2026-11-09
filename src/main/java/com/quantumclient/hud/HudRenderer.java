@@ -45,18 +45,16 @@ public final class HudRenderer {
 
         // Водяной знак слева сверху
         if (mm.isOn("Watermark")) {
-            String name = "Hamster_Anime";
+            String name = "Quantum Client";
             int w = Draw.width(name) + 16;
-            int x = HudLayout.watermarkX + HudLayout.offsetX;
-            int wy = HudLayout.watermarkY + HudLayout.offsetY;
-            Draw.rrect(ctx, x - 1, wy - 1, w + 2, 18, 6, Draw.alpha(accent, 0x70));
-            Draw.rrect(ctx, x, wy, w, 16, 5, 0xC0120B22);
-            Draw.textShadow(ctx, "Hamster_Anime", x + 8, wy + 4, accent);
+            Draw.rrect(ctx, 5, 5, w + 2, 18, 6, Draw.alpha(accent, 0x70));
+            Draw.rrect(ctx, 6, 6, w, 16, 5, 0xC0120B22);
+            Draw.textShadow(ctx, name, 14, 10, accent);
         }
 
         int y = 6;
 
-        // Информационная панель
+        // Информационная панель справа сверху
         List<String[]> rows = new ArrayList<>();
         if (mm.isOn("FPS")) {
             rows.add(new String[]{"FPS", String.valueOf(mc.getCurrentFps())});
@@ -84,10 +82,7 @@ public final class HudRenderer {
             }
             int w = textW + 16;
             int h = rows.size() * 11 + 8;
-            int x = HudLayout.infoX < 0 ? screenW - w - 6 : HudLayout.infoX;
-            y = HudLayout.infoY;
-            x += HudLayout.offsetX;
-            y += HudLayout.offsetY;
+            int x = screenW - w - 6;
             Draw.rrect(ctx, x - 1, y - 1, w + 2, h + 2, 7, Draw.alpha(accent, 0x90));
             Draw.rrect(ctx, x, y, w, h, 6, 0xD0120B22);
             int ty = y + 5;
@@ -102,17 +97,14 @@ public final class HudRenderer {
         // Клавиши
         if (mm.isOn("Keystrokes")) {
             int total = 70;
-            int x0 = HudLayout.keysX < 0 ? screenW - total - 6 : HudLayout.keysX;
-            int keysY = HudLayout.keysY < 0 ? y : HudLayout.keysY;
-            x0 += HudLayout.offsetX;
-            keysY += HudLayout.offsetY;
+            int x0 = screenW - total - 6;
             boolean showCps = mm.isOn("CPS");
-            key(ctx, x0 + 24, keysY, 22, 22, "W", mc.options.forwardKey.isPressed(), null);
-            key(ctx, x0, keysY + 24, 22, 22, "A", mc.options.leftKey.isPressed(), null);
-            key(ctx, x0 + 24, keysY + 24, 22, 22, "S", mc.options.backKey.isPressed(), null);
-            key(ctx, x0 + 48, keysY + 24, 22, 22, "D", mc.options.rightKey.isPressed(), null);
-            key(ctx, x0, keysY + 48, 34, 22, "LMB", leftDown, showCps ? String.valueOf(cps(LEFT_CLICKS)) : null);
-            key(ctx, x0 + 36, keysY + 48, 34, 22, "RMB", rightDown, showCps ? String.valueOf(cps(RIGHT_CLICKS)) : null);
+            key(ctx, x0 + 24, y, 22, 22, "W", mc.options.forwardKey.isPressed(), null);
+            key(ctx, x0, y + 24, 22, 22, "A", mc.options.leftKey.isPressed(), null);
+            key(ctx, x0 + 24, y + 24, 22, 22, "S", mc.options.backKey.isPressed(), null);
+            key(ctx, x0 + 48, y + 24, 22, 22, "D", mc.options.rightKey.isPressed(), null);
+            key(ctx, x0, y + 48, 34, 22, "LMB", leftDown, showCps ? String.valueOf(cps(LEFT_CLICKS)) : null);
+            key(ctx, x0 + 36, y + 48, 34, 22, "RMB", rightDown, showCps ? String.valueOf(cps(RIGHT_CLICKS)) : null);
         }
     }
 

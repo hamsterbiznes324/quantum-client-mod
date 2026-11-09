@@ -22,7 +22,7 @@ public class ClickGui extends Screen {
             "Управление клиентом"
     };
 
-    private static final int SIDEBAR = 130;
+    private int sidebarWidth = 176;
     private static final int COL_BG = 0xFF140C26;
     private static final int COL_SIDEBAR = 0xFF0E0819;
     private static final int COL_CARD = 0xFF1D1333;
@@ -59,7 +59,7 @@ public class ClickGui extends Screen {
     private int ch;
 
     public ClickGui() {
-        super(Text.literal("Quantum Client"));
+        super(Text.literal("Hamster_Anime"));
     }
 
     @Override
@@ -84,9 +84,10 @@ public class ClickGui extends Screen {
 
         ctx.fill(0, 0, width, height, 0x88000000);
 
-        int gw = Math.min(width - 24, 580);
-        int gh = Math.min(height - 24, 350);
+        int gw = Math.min(width - 48, 780);
+        int gh = Math.min(height - 48, 425);
         int gx = (width - gw) / 2;
+        sidebarWidth = Math.max(150, Math.min(190, gw * 225 / 1000));
         int gy = (height - gh) / 2;
 
         // Рамка и фон окна
@@ -94,24 +95,24 @@ public class ClickGui extends Screen {
         Draw.rrect(ctx, gx, gy, gw, gh, 8, COL_BG);
 
         // Боковая панель
-        Draw.rrect(ctx, gx, gy, SIDEBAR, gh, 8, COL_SIDEBAR);
-        ctx.fill(gx + SIDEBAR - 8, gy, gx + SIDEBAR, gy + gh, COL_SIDEBAR);
+        Draw.rrect(ctx, gx, gy, sidebarWidth, gh, 8, COL_SIDEBAR);
+        ctx.fill(gx + sidebarWidth - 8, gy, gx + sidebarWidth, gy + gh, COL_SIDEBAR);
 
         drawProfile(ctx, gx, gy);
         drawTabs(ctx, gx, gy, mouseX, mouseY);
-        Draw.centered(ctx, "v1.0.0", gx + SIDEBAR / 2, gy + gh - 14, COL_MUTED);
+        Draw.centered(ctx, "v1.0.0", gx + sidebarWidth / 2, gy + gh - 14, COL_MUTED);
 
         // Заголовок вкладки
-        int hx = gx + SIDEBAR + 12;
+        int hx = gx + sidebarWidth + 16;
         Draw.rrect(ctx, hx, gy + 10, 18, 18, 5, accent);
         Draw.textShadow(ctx, TAB_NAMES[selectedTab], hx + 26, gy + 10, 0xFFFFFFFF);
         Draw.text(ctx, TAB_DESC[selectedTab], hx + 26, gy + 21, accent);
 
         // Область содержимого
-        cx = gx + SIDEBAR + 12;
-        cy = gy + 44;
-        cw = gw - SIDEBAR - 26;
-        ch = gh - 44 - 10;
+        cx = gx + sidebarWidth + 16;
+        cy = gy + 58;
+        cw = gw - sidebarWidth - 30;
+        ch = gh - 58 - 14;
 
         int maxScroll = Math.max(0, contentHeight - ch);
         scroll = Math.max(0, Math.min(maxScroll, scroll));
@@ -139,7 +140,7 @@ public class ClickGui extends Screen {
 
     private void drawProfile(DrawContext ctx, int gx, int gy) {
         int accent = Theme.accent();
-        String name = "Player";
+        String name = "Hamster_Anime";
         if (client != null && client.getSession() != null) {
             name = client.getSession().getUsername();
         }
@@ -147,18 +148,18 @@ public class ClickGui extends Screen {
         Draw.rrect(ctx, gx + 11, gy + 11, 28, 28, 7, accent);
         String initial = name.isEmpty() ? "?" : name.substring(0, 1).toUpperCase();
         Draw.centered(ctx, initial, gx + 25, gy + 21, 0xFFFFFFFF);
-        Draw.textShadow(ctx, Draw.trim(name, SIDEBAR - 56), gx + 46, gy + 14, 0xFFFFFFFF);
-        Draw.text(ctx, "Visual Client", gx + 46, gy + 26, accent);
+        Draw.textShadow(ctx, Draw.trim("Hamster_Anime", sidebarWidth - 56), gx + 46, gy + 14, 0xFFFFFFFF);
+        Draw.text(ctx, "Visual Client", gx + 46, gy + 30, accent);
     }
 
     private void drawTabs(DrawContext ctx, int gx, int gy, int mouseX, int mouseY) {
         int accent = Theme.accent();
-        int top = gy + 56;
+        int top = gy + 76;
         for (int i = 0; i < TAB_NAMES.length; i++) {
-            int tx = gx + 8;
-            int ty = top + i * 28;
-            int tw = SIDEBAR - 16;
-            int th = 24;
+            int tx = gx + 12;
+            int ty = top + i * 34;
+            int tw = sidebarWidth - 24;
+            int th = 30;
             boolean selected = i == selectedTab;
             boolean hover = Draw.inside(mouseX, mouseY, tx, ty, tw, th);
             if (selected) {
@@ -166,8 +167,8 @@ public class ClickGui extends Screen {
             } else if (hover) {
                 Draw.rrect(ctx, tx, ty, tw, th, 6, 0xFF221736);
             }
-            Draw.rrect(ctx, tx + 8, ty + 8, 8, 8, 2, selected ? 0xFFFFFFFF : accent);
-            Draw.text(ctx, TAB_NAMES[i], tx + 22, ty + 8, selected ? 0xFFFFFFFF : COL_TEXT);
+            Draw.rrect(ctx, tx + 12, ty + 11, 9, 9, 2, selected ? 0xFFFFFFFF : accent);
+            Draw.text(ctx, TAB_NAMES[i], tx + 30, ty + 10, selected ? 0xFFFFFFFF : COL_TEXT);
             final int index = i;
             hits.add(new Hit(tx, ty, tw, th, false, (a, b, button) -> {
                 if (button == 0) {
@@ -183,7 +184,7 @@ public class ClickGui extends Screen {
     private int drawModules(DrawContext ctx, Category category, int mouseX, int mouseY) {
         ModuleManager manager = QuantumClientMod.moduleManager;
         int cols = cw >= 320 ? 2 : 1;
-        int gap = 8;
+        int gap = 10;
         int colW = (cw - gap * (cols - 1)) / cols;
         int start = cy - (int) scroll;
         int[] colY = new int[cols];
@@ -318,8 +319,8 @@ public class ClickGui extends Screen {
         int w = cw;
         int h = 132;
         card(ctx, x, y, w, h, false);
-        Draw.textShadow(ctx, "Hamster_Anime", x + 10, y + 8, 0xFFFFFFFF);
-        Draw.text(ctx, "Меню: Right Shift  |  HUD Editor: F8", x + 10, y + 26, COL_TEXT);
+        Draw.textShadow(ctx, "Клиент", x + 10, y + 8, 0xFFFFFFFF);
+        Draw.text(ctx, "Открыть меню: Right Shift", x + 10, y + 26, COL_TEXT);
         Draw.text(ctx, "Зум: C (меняется в управлении)", x + 10, y + 40, COL_TEXT);
         Draw.text(ctx, "Конфиг: config/quantum-client.json", x + 10, y + 54, COL_MUTED);
 

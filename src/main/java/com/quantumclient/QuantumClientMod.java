@@ -3,8 +3,6 @@ package com.quantumclient;
 import com.quantumclient.config.ConfigManager;
 import com.quantumclient.gui.ClickGui;
 import com.quantumclient.hud.HudRenderer;
-import com.quantumclient.hud.HudLayout;
-import com.quantumclient.hud.HudEditorScreen;
 import com.quantumclient.modules.ModuleManager;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
@@ -23,7 +21,6 @@ public class QuantumClientMod implements ClientModInitializer {
     public static ConfigManager configManager;
 
     private boolean wasRightShiftDown = false;
-    private boolean wasF8Down = false;
 
     @Override
     public void onInitializeClient() {
@@ -32,7 +29,6 @@ public class QuantumClientMod implements ClientModInitializer {
         moduleManager = new ModuleManager();
         configManager = new ConfigManager();
         configManager.load(moduleManager);
-        HudLayout.load();
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             // Right Shift открывает и закрывает меню
@@ -46,12 +42,6 @@ public class QuantumClientMod implements ClientModInitializer {
                 }
             }
             wasRightShiftDown = isDown;
-
-            boolean f8Down = InputUtil.isKeyPressed(window, GLFW.GLFW_KEY_F8);
-            if (f8Down && !wasF8Down && client.currentScreen == null) {
-                client.setScreen(new HudEditorScreen());
-            }
-            wasF8Down = f8Down;
 
             if (client.player != null && client.world != null) {
                 moduleManager.onTick();
