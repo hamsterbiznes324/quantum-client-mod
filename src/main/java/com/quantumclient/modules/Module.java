@@ -1,35 +1,74 @@
 package com.quantumclient.modules;
 
-public abstract class Module {
-    private final String name;
-    private final String description;
-    private final String category;
-    private boolean enabled;
+import java.util.ArrayList;
+import java.util.List;
 
-    public Module(String name, String description, String category) {
-        this.name = name;
+public class Module {
+    public enum Category {
+        VISUALS("Визуалы"),
+        HUD("HUD");
+
+        public final String title;
+
+        Category(String title) {
+            this.title = title;
+        }
+    }
+
+    public final String id;
+    public final String title;
+    public final String description;
+    public final Category category;
+    public final List<Setting> settings = new ArrayList<>();
+
+    private boolean enabled;
+    public boolean defaultEnabled;
+
+    public Module(String id, String title, String description, Category category) {
+        this.id = id;
+        this.title = title;
         this.description = description;
         this.category = category;
-        this.enabled = false;
+    }
+
+    /** Модуль включён по умолчанию. */
+    public Module defaultOn() {
+        this.defaultEnabled = true;
+        this.enabled = true;
+        return this;
+    }
+
+    protected <T extends Setting> T add(T setting) {
+        settings.add(setting);
+        return setting;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean value) {
+        if (value == enabled) {
+            return;
+        }
+        enabled = value;
+        if (value) {
+            onEnable();
+        } else {
+            onDisable();
+        }
     }
 
     public void toggle() {
         setEnabled(!enabled);
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-        if (enabled) onEnable();
-        else onDisable();
-        com.quantumclient.QuantumClientMod.configManager.save();
+    public void onEnable() {
     }
 
-    public void onEnable() {}
-    public void onDisable() {}
-    public void onTick() {}
+    public void onDisable() {
+    }
 
-    public String getName() { return name; }
-    public String getDescription() { return description; }
-    public String getCategory() { return category; }
-    public boolean isEnabled() { return enabled; }
+    public void onTick() {
+    }
 }

@@ -5,11 +5,9 @@ import com.quantumclient.gui.ClickGui;
 import com.quantumclient.hud.HudRenderer;
 import com.quantumclient.modules.ModuleManager;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
@@ -21,7 +19,6 @@ public class QuantumClientMod implements ClientModInitializer {
 
     public static ModuleManager moduleManager;
     public static ConfigManager configManager;
-    public static KeyBinding openGuiKey;
 
     private boolean wasRightShiftDown = false;
 
@@ -29,22 +26,14 @@ public class QuantumClientMod implements ClientModInitializer {
     public void onInitializeClient() {
         LOGGER.info("Quantum Client initializing...");
 
-        configManager = new ConfigManager();
         moduleManager = new ModuleManager();
-        configManager.load();
-
-        openGuiKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
-            "key.quantum-client.open_gui",
-            InputUtil.Type.KEYSYM,
-            GLFW.GLFW_KEY_RIGHT_SHIFT,
-            "category.quantum-client"
-        ));
+        configManager = new ConfigManager();
+        configManager.load(moduleManager);
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            // Direct key check — works without needing Controls menu setup
-            long window = MinecraftClient.getInstance().getWindow().getHandle();
+            // Right Shift открывает и закрывает меню
+            long window = client.getWindow().getHandle();
             boolean isDown = InputUtil.isKeyPressed(window, GLFW.GLFW_KEY_RIGHT_SHIFT);
-
             if (isDown && !wasRightShiftDown) {
                 if (client.currentScreen == null) {
                     client.setScreen(new ClickGui());
@@ -54,16 +43,18 @@ public class QuantumClientMod implements ClientModInitializer {
             }
             wasRightShiftDown = isDown;
 
-            // Also handle wasPressed for those who set it in Controls
-            while (openGuiKey.wasPressed()) {
-                if (client.currentScreen == null) {
-                    client.setScreen(new ClickGui());
-                }
+            if (client.player != null && client.world != null) {
+                moduleManager.onTick();
             }
         });
 
-        HudRenderCallback.EVENT.register(new HudRenderer());
+        HudRenderCallback.EVENT.register(HudRenderer::render);
 
-        LOGGER.info("Quantum Client loaded! {} modules active", moduleManager.getModules().size());
+        ClientLifecycleEvents.CLIENT_STOPPING.register(client -> {
+            configManager.save(moduleManager);
+            moduleManager.shutdown();
+        });
+
+        LOGGER.info("Quantum Client loaded! {} modules", moduleManager.getModules().size());
     }
 }

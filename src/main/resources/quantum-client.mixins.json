@@ -2,13 +2,8 @@
   "required": true,
   "package": "com.quantumclient.mixin",
   "compatibilityLevel": "JAVA_21",
-  "client": [
-    "GameRendererMixin",
-    "GameOptionsMixin",
-    "ClientPlayerEntityMixin",
-    "MinecraftClientAccessor"
-  ],
+  "client": [],
   "injectors": {
-    "defaultRequire": 0
+    "defaultRequire": 1
   }
 }
