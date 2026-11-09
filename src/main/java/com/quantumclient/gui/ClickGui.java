@@ -318,8 +318,8 @@ public class ClickGui extends Screen {
         int w = cw;
         int h = 132;
         card(ctx, x, y, w, h, false);
-        Draw.textShadow(ctx, "Клиент", x + 10, y + 8, 0xFFFFFFFF);
-        Draw.text(ctx, "Открыть меню: Right Shift", x + 10, y + 26, COL_TEXT);
+        Draw.textShadow(ctx, "Hamster_Anime", x + 10, y + 8, 0xFFFFFFFF);
+        Draw.text(ctx, "Меню: Right Shift  |  HUD Editor: F8", x + 10, y + 26, COL_TEXT);
         Draw.text(ctx, "Зум: C (меняется в управлении)", x + 10, y + 40, COL_TEXT);
         Draw.text(ctx, "Конфиг: config/quantum-client.json", x + 10, y + 54, COL_MUTED);
 
