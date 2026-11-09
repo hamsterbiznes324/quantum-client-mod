@@ -8,6 +8,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import org.lwjgl.glfw.GLFW;
@@ -21,6 +22,8 @@ public class QuantumClientMod implements ClientModInitializer {
     public static ModuleManager moduleManager;
     public static ConfigManager configManager;
     public static KeyBinding openGuiKey;
+
+    private boolean wasRightShiftDown = false;
 
     @Override
     public void onInitializeClient() {
@@ -38,6 +41,20 @@ public class QuantumClientMod implements ClientModInitializer {
         ));
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            // Direct key check — works without needing Controls menu setup
+            long window = MinecraftClient.getInstance().getWindow().getHandle();
+            boolean isDown = InputUtil.isKeyPressed(window, GLFW.GLFW_KEY_RIGHT_SHIFT);
+
+            if (isDown && !wasRightShiftDown) {
+                if (client.currentScreen == null) {
+                    client.setScreen(new ClickGui());
+                } else if (client.currentScreen instanceof ClickGui) {
+                    client.setScreen(null);
+                }
+            }
+            wasRightShiftDown = isDown;
+
+            // Also handle wasPressed for those who set it in Controls
             while (openGuiKey.wasPressed()) {
                 if (client.currentScreen == null) {
                     client.setScreen(new ClickGui());
