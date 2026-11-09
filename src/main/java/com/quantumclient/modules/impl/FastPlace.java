@@ -1,5 +1,6 @@
 package com.quantumclient.modules.impl;
 
+import com.quantumclient.mixin.MinecraftClientAccessor;
 import com.quantumclient.modules.Module;
 import net.minecraft.client.MinecraftClient;
 
@@ -12,9 +13,7 @@ public class FastPlace extends Module {
     public void onTick() {
         MinecraftClient client = MinecraftClient.getInstance();
         if (client.player != null) {
-            if (client.player.itemUseTimeLeft > 0) {
-                client.player.itemUseTimeLeft = 0;
-            }
+            ((MinecraftClientAccessor) client).setItemUseCooldown(0);
         }
     }
 }

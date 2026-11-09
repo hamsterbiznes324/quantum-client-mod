@@ -5,7 +5,8 @@
   "client": [
     "GameRendererMixin",
     "GameOptionsMixin",
-    "ClientPlayerEntityMixin"
+    "ClientPlayerEntityMixin",
+    "MinecraftClientAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
