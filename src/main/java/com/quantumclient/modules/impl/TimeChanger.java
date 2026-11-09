@@ -19,7 +19,7 @@ public class TimeChanger extends Module {
     public void onTick() {
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.world != null) {
-            mc.world.setTimeOfDay(TICKS[time.index]);
+            mc.world.setTime(mc.world.getTime(), TICKS[time.index], false);
         }
     }
 }
